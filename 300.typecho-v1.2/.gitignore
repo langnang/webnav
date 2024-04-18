@@ -17,3 +17,4 @@ package.lock
 /index.php
 /install.php
 LICENSE.txt
+config.inc.php
