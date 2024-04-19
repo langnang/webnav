@@ -19,8 +19,8 @@ jobs:
       # - name: Laravel mix
       #   run: npm run prod
 
-      - name: Install composer dependencies
-        run: composer install
+      # - name: Install composer dependencies
+      # run: composer install
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
