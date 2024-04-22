@@ -11,10 +11,10 @@ package.lock
 /admin
 /install
 /usr/plugins/HelloWorld
-/usr/themes/default
+# /usr/themes/default
 /usr/uploads
 /var
 /index.php
 /install.php
 LICENSE.txt
-config.inc.php
+config.inc*
