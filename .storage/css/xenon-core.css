@@ -1358,7 +1358,7 @@ body {
 
 .navbar.horizontal-menu {
     position: relative;
-    height: 79px;
+    height: 85px;
     background: #fff;
     margin: 0;
     padding: 0;
@@ -1405,13 +1405,11 @@ body {
 }
 
 .navbar.horizontal-menu .navbar-inner .navbar-brand {
-    padding: 0 57px 0 45px;
+    padding: 0 30px;
     margin: 0;
     float: left;
-    height: 79px;
-    display: table;
-    background-color: #2c2e2f;
-    border-bottom: 1px solid #313437;
+    height: 85px;
+    display: table
 }
 
 .navbar.horizontal-menu .navbar-inner .navbar-brand:hover a[data-toggle=settings-pane] {
@@ -2498,7 +2496,7 @@ body.chat-open .user-info-navbar a[data-toggle=chat] {
 .user-info-navbar .user-info-menu>li:hover,
 .user-info-navbar .user-info-menu>li>a:hover {
     color: #fff;
-    background-color: #40bbea;
+    background-color: #2c2e2f;
 }
 
 .user-info-navbar .user-info-menu>li>a .badge {
