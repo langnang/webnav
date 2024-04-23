@@ -25,44 +25,41 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
     <?php $this->need('sidebar.php'); ?>
     <!--顶部美化开始-->
     <div class="board">
-      <?php if ($this->options->zmki_navs == '1'): ?>
-        <?php $defaultCategoryMid = null; ?>
+      <?php $defaultCategoryMid = null; ?>
 
-        <div class="left" style="margin-right: auto;">
-          <ul class="user-info-menu left-links list-inline list-unstyled" style="margin-right: auto;">
-            <?php $this->widget('Widget_Metas_Category_List')->to($navs); ?>
-            <?php while ($navs->next()): ?>
-              <?php if ($navs->levels === 0): ?>
-                <?php
-                if (empty($defaultCategoryMid)) {
-                  if (!empty($this->request->get('slug'))) {
-                    if ($this->request->get('slug') === $navs->slug)
-                      $defaultCategoryMid = $navs->mid;
-                  } else {
-                    $defaultCategoryMid = $navs->mid;
-                  }
-                }
-                ?>
-                <li><span class="board-title<?php if ($defaultCategoryMid == $navs->mid)
-                  echo ' active'; ?>"><a href="/index.php/category/<?php echo $navs->slug; ?>/"><i class="fa fa-<?php echo str_replace('fa-', '', $navs->ico ?? $navs->slug); ?>"></i> <?php $navs->name(); ?></a></span></li>
-              <?php endif; ?>
-            <?php endwhile; ?>
-          </ul>
-        </div>
-        <ul class="user-info-menu left-links list-inline list-unstyled">
-          <li><span class="board-title"><a href="<?php $this->options->zmki_links(); ?>"><i class="fa fa-plus-square"></i> 管理网址</a></span></li>
-          <li><span class="board-title "><a href="<?php $this->options->zmki_url(); ?>" target="_blank"><i class="fa fa-heart xiaotubiao" style="color: #fb5962;"></i>&nbsp;<?php $this->options->zmki_name(); ?></a></span>
-          </li>
+      <div class="left" style="margin-right: auto;">
+        <ul class="user-info-menu left-links list-inline list-unstyled" style="margin-right: auto;">
+          <?php $this->widget('Widget_Metas_Category_List')->to($navs); ?>
+          <?php $this->widget('Widget_Metas_Category_List')->to($categorys); ?>
+
+          <?php $children = $categorys->getAllChildren(THEME_ROOT_META);
+          ?>
+
+          <?php foreach ($children as $mid): ?>
+            <?php $nav = $categorys->getCategory($mid);
+            if ($nav['levels'] != 1)
+              continue; ?>
+            <?php
+            if (empty($defaultCategoryMid)) {
+              if (!empty($this->request->get('slug'))) {
+                if ($this->request->get('slug') === $nav['slug'])
+                  $defaultCategoryMid = $nav['mid'];
+              } else {
+                $defaultCategoryMid = $nav['mid'];
+              }
+            }
+            ?>
+            <li><span class="board-title<?php if ($defaultCategoryMid == $nav['mid'])
+              echo ' active'; ?>"><a href="/index.php/category/<?php echo $nav['slug']; ?>/"><i class="fa <?php echo str_replace('--', ' ', $nav['slug']); ?>"></i> <?php echo $nav['name']; ?></a></span></li>
+          <?php endforeach; ?>
+
         </ul>
-      <?php else: ?>
-        <div class="left" style="margin-right: auto;">
-          <ul class="user-info-menu left-links list-inline list-unstyled">
-            <li><span class="board-title"><a href="<?php $this->options->zmki_links(); ?>"><i class="fa fa-plus-square"></i> 管理网址</a></span></li>
-            <li><span class="board-title "><a href="<?php $this->options->zmki_url(); ?>" target="_blank"><i class="fa fa-heart xiaotubiao" style="color: #fb5962;"></i>&nbsp;<?php $this->options->zmki_name(); ?></a></span>
-            </li>
-          </ul>
-        </div>
-      <?php endif; ?>
+      </div>
+      <ul class="user-info-menu left-links list-inline list-unstyled">
+        <li><span class="board-title"><a href="<?php $this->options->zmki_links(); ?>"><i class="fa fa-plus-square"></i> 管理网址</a></span></li>
+        <li><span class="board-title "><a href="<?php $this->options->zmki_url(); ?>" target="_blank"><i class="fa fa-heart xiaotubiao" style="color: #fb5962;"></i>&nbsp;<?php $this->options->zmki_name(); ?></a></span>
+        </li>
+      </ul>
 
       <div class="my_mode_switch" title="切换模式"></div>
       <div class="dark_mode_list dropdown xs-left">
@@ -109,28 +106,33 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
           </div>
         </div>
       <?php endif; ?>
+
+
       <?php $this->widget('Widget_Metas_Category_List')->to($categories); ?>
-      <?php if ($this->options->zmki_navs == '1'): ?>
+
+      <?php $navs = $categories->getAllChildren(THEME_ROOT_META); ?>
+      <?php foreach ($navs as $index => $mid) { ?>
+        <?php $nav = $categories->getCategory($mid); ?>
+        <?php if ($nav['slug'] === $this->request->get('slug')): ?>
+
+          <?php $sides = $categories->getAllChildren($nav['mid']); ?>
+
+          <?php foreach ($sides as $side):
+            $side = $categories->getCategory($side);
+            ?>
+            <?php if ($side['levels'] != 2)
+              continue; ?>
 
 
-        <?php while ($categories->next()): ?>
-          <?php if ($categories->levels === 0 && empty($defaultCategoryMid)) {
-            if (!empty($this->request->get('slug'))) {
-              if ($this->request->get('slug') === $categories->slug)
-                $defaultCategoryMid = $categories->mid;
-            } else {
-              $defaultCategoryMid = $categories->mid;
-            }
-          } ?>
-          <?php if ($categories->levels === 1 && !empty($defaultCategoryMid) && $categories->parent == $defaultCategoryMid): ?>
-            <?php $children = $categories->getAllChildren($categories->mid); ?>
 
-            <?php foreach (array_merge([$categories->mid,], $children) as $mid) { ?>
+            <?php $children = $categories->getAllChildren($side['mid']);
 
-              <?php $category = Helper::widgetById('metas', $mid); ?>
+            ?>
+            <?php foreach (array_merge([$side['mid']], $children) as $mid):
+              $card = $categories->getCategory($mid); ?>
 
-              <?php $this->widget('Widget_Archive@category-' . $category->mid, 'pageSize=10000&type=category', 'mid=' . $category->mid)->to($posts); ?>
-              <h4 class=" text-gray"><i class="linecons-tag" style="margin-right: 7px;" data-set-nav="#<?php $category->name(); ?>"></i><?php $category->name(); ?></h4>
+              <?php $this->widget('Widget_Archive@category-' . $card['mid'], 'pageSize=10000&type=category', 'mid=' . $card['mid'])->to($posts); ?>
+              <h4 class=" text-gray"><i class="linecons-tag" style="margin-right: 7px;" data-set-nav="#<?php echo $card['name']; ?>"></i><?php echo $card['name']; ?></h4>
               <div class="row">
                 <?php while ($posts->next()): ?>
                   <div class="col-sm-3">
@@ -155,48 +157,11 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
                 <?php endwhile; ?>
               </div>
               <br />
+            <?php endforeach; ?>
+          <?php endforeach; ?>
 
-            <?php } ?>
-          <?php endif; ?>
-
-        <?php endwhile; ?>
-
-
-      <?php else: ?>
-
-
-        <?php while ($categories->next()): ?>
-          <?php if (count($categories->children) === 0): ?>
-            <?php $this->widget('Widget_Archive@category-' . $categories->mid, 'pageSize=10000&type=category', 'mid=' . $categories->mid)->to($posts); ?>
-            <h4 class=" text-gray"><i class="linecons-tag" style="margin-right: 7px;" data-set-nav="#<?php $categories->name(); ?>"></i><?php $categories->name(); ?></h4>
-            <div class="row">
-              <?php while ($posts->next()): ?>
-                <div class="col-sm-3">
-                  <div class="xe-widget xe-conversations box2 label-info" onclick="window.open('<?php echo $posts->fields->url; ?>', '_blank')" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="<?php echo $posts->fields->url; ?>">
-                    <div class="xe-comment-entry">
-                      <span class="xe-user-img">
-                        <?php if (strlen($posts->fields->logo) > 0): ?>
-                          <img src="<?php echo $posts->fields->logo; ?>" class="img-circle" width="54" alt="<?php $posts->title(); ?>">
-                        <?php else: ?>
-                          <span class="img-circle no-img"><?php echo strlen($posts->title) > 0 ? mb_substr($posts->title, 0, 1) : '' ?></span>
-                        <?php endif; ?>
-                      </span>
-                      <div class="xe-comment">
-                        <span class="xe-user-name overflowClip_1">
-                          <strong><?php $posts->title(); ?></strong>
-                        </span>
-                        <p class="overflowClip_2"><?php echo $posts->fields->text; ?></p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <?php endwhile; ?>
-            </div>
-            <br />
-          <?php else: ?>
-          <?php endif; ?>
-        <?php endwhile; ?>
-      <?php endif; ?>
+        <?php endif; ?>
+      <?php } ?>
       <?php $this->need('footer.php'); ?>
     </div>
 

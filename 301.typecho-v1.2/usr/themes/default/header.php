@@ -3,6 +3,10 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
   exit;
 // define("THEME_URL", '/' . str_replace($this->options->siteUrl, "", $this->options->themeUrl));
 define("THEME_URL", '/usr/themes/webstack');
+// var_dump(defined('THEME_URL'));
+// define("THEME_URL", '/usr/themes/webstack');
+
+defined('THEME_ROOT_META') ? true : define('THEME_ROOT_META', 0);
 ?>
 
 <head>

@@ -6,37 +6,35 @@
         <img class="logo_size" src="<?php echo empty($this->options->Biglogo()) ? THEME_URL . '/images/logo@2x.png' : $this->options->Biglogo(); ?>" width="100%" alt="<?php $this->options->IndexName(); ?>" />
       </div>
     </header>
+    <?php // \Widget\Metas\Category\Rows::alloc('current=2')->listCategories('wrapClass=widget-list'); ?>
+    <?php // \Widget\Metas\Category\Rows::alloc('current=2')->listCategories('wrapClass=widget-list'); ?>
     <ul id="main-menu" class="main-menu mobile-is-visible">
       <?php $this->widget('Widget_Metas_Category_List')->to($categorys); ?>
 
-      <?php if ($this->options->zmki_navs == '1'): ?>
-        <?php $defaultCategoryMid = null; ?>
+      <?php $navs = $categorys->getAllChildren(THEME_ROOT_META); ?>
+      <?php foreach ($navs as $index => $mid) { ?>
+        <?php $nav = $categorys->getCategory($mid); ?>
+        <?php if ($nav['slug'] === $this->request->get('slug')): ?>
 
-        <?php while ($categorys->next()): ?>
-          <?php
-          if (empty($defaultCategoryMid)) {
-            if (!empty($this->request->get('slug'))) {
-              if ($this->request->get('slug') === $categorys->slug)
-                $defaultCategoryMid = $categorys->mid;
-            } else {
-              $defaultCategoryMid = $categorys->mid;
-            }
-          }
-          ?>
-          <?php if ($categorys->levels === 1 && $categorys->parent == $defaultCategoryMid): ?>
-            <?php $children = $categorys->getAllChildren($categorys->mid); ?>
+          <?php $sides = $categorys->getAllChildren($nav['mid']); ?>
+
+          <?php foreach ($sides as $side):
+            $side = $categorys->getCategory($side); ?>
+            <?php if ($side['levels'] != 2)
+              continue; ?>
+            <?php $children = $categorys->getAllChildren($side['mid']); ?>
             <?php if (empty($children)) { ?>
               <li>
-                <a href="<?php if ($this->is('index')): ?><?php else: ?>/<?php endif; ?>#<?php $categorys->name(); ?>" class="smooth">
-                  <i class="fa fa-<?php echo str_replace('fa-', '', $categorys->ico ?? $categorys->slug); ?>"></i>
-                  <span class="title"><?php $categorys->name(); ?></span>
+                <a href="<?php if ($this->is('index')): ?><?php else: ?>/<?php endif; ?>#<?php echo $side['name']; ?>" class="smooth">
+                  <i class="fa <?php echo str_replace('--', ' ', $side['slug']); ?>"></i>
+                  <span class="title"><?php echo $side['name']; ?></span>
                 </a>
               </li>
             <?php } else { ?>
               <li>
                 <a>
-                  <i class="fa fa-<?php echo str_replace('fa-', '', $categorys->ico ?? $categorys->slug); ?>"></i>
-                  <span class="title"><?php $categorys->name(); ?></span>
+                  <i class="fa <?php echo str_replace('--', ' ', $side['slug']); ?>"></i>
+                  <span class="title"><?php echo $side['name']; ?></span>
                 </a>
                 <ul>
                   <?php foreach ($children as $mid) { ?>
@@ -48,41 +46,11 @@
                 </ul>
               </li>
             <?php } ?>
-          <?php endif; ?>
-        <?php endwhile; ?>
+          <?php endforeach; ?>
 
+        <?php endif; ?>
+      <?php } ?>
 
-      <?php else: ?>
-
-        <?php while ($categorys->next()): ?>
-          <?php if ($categorys->levels === 0): ?>
-            <?php $children = $categorys->getAllChildren($categorys->mid); ?>
-            <?php if (empty($children)) { ?>
-              <li>
-                <a href="<?php if ($this->is('index')): ?><?php else: ?>/<?php endif; ?>#<?php $categorys->name(); ?>" class="smooth">
-                  <i class="fa fa-<?php echo str_replace('fa-', '', $categorys->ico ?? $categorys->slug); ?>"></i>
-                  <span class="title"><?php $categorys->name(); ?></span>
-                </a>
-              </li>
-            <?php } else { ?>
-              <li>
-                <a>
-                  <i class="fa fa-<?php echo str_replace('fa-', '', $categorys->ico ?? $categorys->slug); ?>"></i>
-                  <span class="title"><?php $categorys->name(); ?></span>
-                </a>
-                <ul>
-                  <?php foreach ($children as $mid) { ?>
-                    <?php $child = $categorys->getCategory($mid); ?>
-                    <li>
-                      <a href="<?php if ($this->is('index')): ?><?php else: ?>/<?php endif; ?>#<?php echo $child['name']; ?>" class="smooth"><?php echo $child['name']; ?></a>
-                    </li>
-                  <?php } ?>
-                </ul>
-              </li>
-            <?php } ?>
-          <?php endif; ?>
-        <?php endwhile; ?>
-      <?php endif; ?>
 
       <li class="submit-tag">
         <a href="<?php $this->options->Isabout(); ?>">
