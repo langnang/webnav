@@ -6,7 +6,7 @@ define("THEME_URL", '/usr/themes/webstack');
 // var_dump(defined('THEME_URL'));
 // define("THEME_URL", '/usr/themes/webstack');
 
-defined('THEME_ROOT_META') ? true : define('THEME_ROOT_META', 0);
+defined('THEME_RELATION_META') ? true : define('THEME_RELATION_META', 0);
 ?>
 
 <head>

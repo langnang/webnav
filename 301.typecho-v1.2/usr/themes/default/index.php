@@ -36,7 +36,7 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
           <?php $this->widget('Widget_Metas_Category_List')->to($navs); ?>
           <?php $this->widget('Widget_Metas_Category_List')->to($categorys); ?>
 
-          <?php $children = $categorys->getAllChildren(THEME_ROOT_META);
+          <?php $children = $categorys->getAllChildren(THEME_RELATION_META);
           ?>
 
           <?php foreach ($children as $mid): ?>
@@ -114,7 +114,7 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
 
       <?php $this->widget('Widget_Metas_Category_List')->to($categories); ?>
 
-      <?php $navs = $categories->getAllChildren(THEME_ROOT_META); ?>
+      <?php $navs = $categories->getAllChildren(THEME_RELATION_META); ?>
       <?php foreach ($navs as $index => $mid) { ?>
         <?php $nav = $categories->getCategory($mid); ?>
         <?php if ($mid == $defaultCategoryMid): ?>

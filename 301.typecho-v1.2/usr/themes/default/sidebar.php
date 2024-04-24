@@ -12,7 +12,7 @@
       <?php $this->widget('Widget_Metas_Category_List')->to($categorys); ?>
       <?php $defaultCategoryMid = null; ?>
 
-      <?php $navs = $categorys->getAllChildren(THEME_ROOT_META); ?>
+      <?php $navs = $categorys->getAllChildren(THEME_RELATION_META); ?>
       <?php foreach ($navs as $index => $mid) { ?>
         <?php $nav = $categorys->getCategory($mid);
         if ($nav['levels'] != 1)
