@@ -10,11 +10,24 @@
     <?php // \Widget\Metas\Category\Rows::alloc('current=2')->listCategories('wrapClass=widget-list'); ?>
     <ul id="main-menu" class="main-menu mobile-is-visible">
       <?php $this->widget('Widget_Metas_Category_List')->to($categorys); ?>
+      <?php $defaultCategoryMid = null; ?>
 
       <?php $navs = $categorys->getAllChildren(THEME_ROOT_META); ?>
       <?php foreach ($navs as $index => $mid) { ?>
-        <?php $nav = $categorys->getCategory($mid); ?>
-        <?php if ($nav['slug'] === $this->request->get('slug')): ?>
+        <?php $nav = $categorys->getCategory($mid);
+        if ($nav['levels'] != 1)
+          continue; ?>
+        <?php
+        if (empty($defaultCategoryMid)) {
+          if (!empty($this->request->get('slug'))) {
+            if ($this->request->get('slug') === $nav['slug'])
+              $defaultCategoryMid = $nav['mid'];
+          } else {
+            $defaultCategoryMid = $nav['mid'];
+          }
+        }
+        ?>
+        <?php if ($mid == $defaultCategoryMid): ?>
 
           <?php $sides = $categorys->getAllChildren($nav['mid']); ?>
 
@@ -25,7 +38,7 @@
             <?php $children = $categorys->getAllChildren($side['mid']); ?>
             <?php if (empty($children)) { ?>
               <li>
-                <a href="<?php if ($this->is('index')): ?><?php else: ?>/<?php endif; ?>#<?php echo $side['name']; ?>" class="smooth">
+                <a href="#<?php echo $side['name']; ?>" class="smooth">
                   <i class="fa <?php echo str_replace('--', ' ', $side['slug']); ?>"></i>
                   <span class="title"><?php echo $side['name']; ?></span>
                 </a>
@@ -40,7 +53,7 @@
                   <?php foreach ($children as $mid) { ?>
                     <?php $child = $categorys->getCategory($mid); ?>
                     <li>
-                      <a href="<?php if ($this->is('index')): ?><?php else: ?>/<?php endif; ?>#<?php echo $child['name']; ?>" class="smooth"><?php echo $child['name']; ?></a>
+                      <a href="#<?php echo $child['name']; ?>" class="smooth"><?php echo $child['name']; ?></a>
                     </li>
                   <?php } ?>
                 </ul>

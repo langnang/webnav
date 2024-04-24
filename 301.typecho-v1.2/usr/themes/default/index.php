@@ -12,6 +12,10 @@
  */
 use Utils\Helper;
 
+\Widget\User::alloc()->to($user);
+
+// var_dump($user->hasLogin());
+
 if (!defined('__TYPECHO_ROOT_DIR__'))
   exit;
 ?>
@@ -56,7 +60,7 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
         </ul>
       </div>
       <ul class="user-info-menu left-links list-inline list-unstyled">
-        <li><span class="board-title"><a href="<?php $this->options->zmki_links(); ?>"><i class="fa fa-plus-square"></i> 管理网址</a></span></li>
+        <li><span class="board-title"><a href="./admin/"> <?php echo $user->hasLogin() ? '进入后台' : '管理网址' ?></a></span></li>
         <li><span class="board-title "><a href="<?php $this->options->zmki_url(); ?>" target="_blank"><i class="fa fa-heart xiaotubiao" style="color: #fb5962;"></i>&nbsp;<?php $this->options->zmki_name(); ?></a></span>
         </li>
       </ul>
@@ -113,7 +117,7 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
       <?php $navs = $categories->getAllChildren(THEME_ROOT_META); ?>
       <?php foreach ($navs as $index => $mid) { ?>
         <?php $nav = $categories->getCategory($mid); ?>
-        <?php if ($nav['slug'] === $this->request->get('slug')): ?>
+        <?php if ($mid == $defaultCategoryMid): ?>
 
           <?php $sides = $categories->getAllChildren($nav['mid']); ?>
 
@@ -136,7 +140,7 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
               <div class="row">
                 <?php while ($posts->next()): ?>
                   <div class="col-sm-3">
-                    <div class="xe-widget xe-conversations box2 label-info" onclick="window.open('<?php echo $posts->fields->url; ?>', '_blank')" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="<?php echo $posts->fields->url; ?>">
+                    <div class="xe-widget xe-conversations box2 label-info" onclick="window.open('<?php echo ($user->hasLogin() ? '/admin/write-post.php?cid=' . $posts->cid : $posts->fields->url); ?>', '_blank')" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="<?php echo $posts->fields->url; ?>">
                       <div class="xe-comment-entry">
                         <span class="xe-user-img">
                           <?php if (strlen($posts->fields->logo) > 0): ?>
@@ -160,8 +164,37 @@ if (!defined('__TYPECHO_ROOT_DIR__'))
             <?php endforeach; ?>
           <?php endforeach; ?>
 
+          <?php $this->widget('Widget_Archive@category-' . $nav['mid'], 'pageSize=10000&type=category', 'mid=' . $nav['mid'])->to($posts); ?>
+          <h4 class=" text-gray"><i class="linecons-tag" style="margin-right: 7px;" data-set-nav="#<?php echo $nav['name']; ?>"></i><?php echo $nav['name']; ?></h4>
+          <div class="row">
+            <?php while ($posts->next()): ?>
+              <div class="col-sm-3">
+                <div class="xe-widget xe-conversations box2 label-info" onclick="window.open('<?php echo ($user->hasLogin() ? '/admin/write-post.php?cid=' . $posts->cid : $posts->fields->url); ?>', '_blank')" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="<?php echo $posts->fields->url; ?>">
+                  <div class="xe-comment-entry">
+                    <span class="xe-user-img">
+                      <?php if (strlen($posts->fields->logo) > 0): ?>
+                        <img src="<?php echo $posts->fields->logo; ?>" class="img-circle" width="54" alt="<?php $posts->title(); ?>">
+                      <?php else: ?>
+                        <span class="img-circle no-img"><?php echo strlen($posts->title) > 0 ? mb_substr($posts->title, 0, 1) : '' ?></span>
+                      <?php endif; ?>
+                    </span>
+                    <div class="xe-comment">
+                      <span class="xe-user-name overflowClip_1">
+                        <strong><?php $posts->title(); ?></strong>
+                      </span>
+                      <p class="overflowClip_2"><?php echo $posts->fields->text; ?></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <?php endwhile; ?>
+          </div>
+          <br />
         <?php endif; ?>
       <?php } ?>
+
+
+
       <?php $this->need('footer.php'); ?>
     </div>
 
