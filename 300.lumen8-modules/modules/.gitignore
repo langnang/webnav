@@ -1,4 +1,4 @@
 *
 !.gitignore
-!WebStack/
-!WebStack/Config/config.php
+!/WebStack
+!/WebStack/**/*
