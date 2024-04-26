@@ -20,5 +20,6 @@ modules_statuses.json
 .env.example
 .styleci.yml
 artisan
+composer.json
 index.php
 phpunit.xml
