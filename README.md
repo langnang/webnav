@@ -7,7 +7,9 @@
 - https://github.com/xiaodai945/WEBJIKE
 - https://github.com/zhuima/daohang
 
-- Static
+- HTML
   - [WebStackPage/WebStackPage.github.io](https://github.com/WebStackPage/WebStackPage.github.io)
+- NodeJs
 - PHP
   - [LightAPIs/WebStackTypechoTheme](https://github.com/LightAPIs/WebStackTypechoTheme)
+- Composer
