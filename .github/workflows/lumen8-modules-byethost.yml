@@ -1,28 +1,33 @@
-name: 🚀 Deploy master on push with FTP
+name: 🚀 Deploy lumen8-modules on push with FTP
 
 on:
   push:
     branches:
       - master
     paths:
-      - "html/bootstrap3/**"
+      - "html/webstack/**"
 
 jobs:
-  theme-deploy:
-    name: 🎉 Deploy
+  deploy:
+    name: 🎉 Deploy to langnang.byethost14.com
     runs-on: ubuntu-latest
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
-      # - name: Install node dependencies
-      #   run: yarn install
+      # - name: Use Node.js 14.x
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: 14.x
 
-      # - name: Laravel mix
-      #   run: npm run prod
+      # - name: Install node dependencies
+      #   run: cd nodejs/vue2-ui && yarn install
+
+      # - name: Build pages
+      #   run: cd nodejs/vue2-ui && npm run build
 
       # - name: Install composer dependencies
-      #  run: composer install
+      # run: cd composer/lumen8-modules && composer install
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -30,13 +35,13 @@ jobs:
           # ftp server
           server: ftpupload.net
           # ftp username
-          username: b32_28202196
+          username: b14_37610952
           # ftp password
           password: ${{ secrets.ftp_password }}
           # local dir
-          local-dir: ./php/basicphp
+          local-dir: ./html/webstack/
           # Path to upload to on the server. Must end with trailing slash /
-          server-dir: /webstack.22web.org/htdocs
+          server-dir: /htdocs/html/webstack/
           # File to Exclude
           exclude: |
             **/.git*
